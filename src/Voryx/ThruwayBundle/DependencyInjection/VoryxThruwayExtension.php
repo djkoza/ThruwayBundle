@@ -93,9 +93,10 @@ class VoryxThruwayExtension extends Extension
         }
 
         if (isset($config['router']['authorization']) && $config['router']['authorization'] !== false) {
-            $authId = $config['router']['authorization'];
-            $container->getDefinition('voryx.thruway.server')
-                ->addMethodCall('registerModule', [new Reference($authId)]);
+            foreach($config['router']['authorization'] as $authId){
+                $container->getDefinition('voryx.thruway.server')
+                    ->addMethodCall('registerModule', [new Reference($authId)]);
+            }
         }
 
         //Topic State Handler
