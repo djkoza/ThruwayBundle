@@ -14,7 +14,6 @@ use Thruway\Logging\Logger;
 use Thruway\Transport\PawlTransportProvider;
 use Voryx\ThruwayBundle\Process\Command;
 use Voryx\ThruwayBundle\Process\ProcessManager;
-use Thruway\Transport\RatchetTransportProvider;
 
 /**
  * Class ThruwayProcessCommand
@@ -145,8 +144,7 @@ class ThruwayProcessCommand extends ContainerAwareCommand
             $loop = $this->getContainer()->get('voryx.thruway.loop');
 
             $this->processManager = new ProcessManager("process_manager", $loop, $this->getContainer());
-            $transport = new PawlTransportProvider($this->config['trusted_url']);
-            $this->processManager->addTransportProvider($transport);
+            $this->processManager->addTransportProvider(new PawlTransportProvider($this->config['trusted_url']));
 
             $this->output->writeln('Starting Thruway Workers...');
             $this->output->writeln("The environment is: {$env}");
