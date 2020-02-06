@@ -3,6 +3,7 @@
 namespace Voryx\ThruwayBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use App\Infrastructure\Auth\Thruway\JwtAuthProviderClient;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Thruway\Transport\RatchetTransportProvider;
@@ -21,6 +22,13 @@ class ThruwayRouterCommand extends ContainerAwareCommand
     public function setLogger(\Psr\Log\LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    public function __construct()
+    {
+        // $this->userReadModelRepository  = $userReadModelRepository;
+
+        parent::__construct();
     }
 
     /**

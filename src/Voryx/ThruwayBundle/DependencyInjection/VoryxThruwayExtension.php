@@ -114,7 +114,6 @@ class VoryxThruwayExtension extends Extension
      */
     protected function createTaggedServiceHolder($config, ContainerBuilder $container)
     {
-
         if (!$container->hasDefinition('tagged_service_holder')) {
             $taggedServiceHolder = new Definition();
             $taggedServiceHolder->setClass('ArrayObject');

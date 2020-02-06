@@ -133,8 +133,7 @@ class ResourceMapper
     /**
      * @return array
      */
-    public
-    function getAllMappings()
+    public function getAllMappings()
     {
         return $this->mappings;
     }

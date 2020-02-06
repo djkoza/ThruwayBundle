@@ -24,9 +24,9 @@ class ContainerFactory
         $childContainer->set('voryx.thruway.loop', $loop);
 
         //Any service that is tagged 'thruway.global' will be copied to the child container
-        foreach ($parentContainer->get('tagged_service_holder') as $taggedService) {
-            $childContainer->set($taggedService[0], $taggedService[1]);
-        }
+        // foreach ($parentContainer->get('tagged_service_holder') as $taggedService) {
+        //     $childContainer->set($taggedService[0], $taggedService[1]);
+        // }
 
         return $childContainer;
     }

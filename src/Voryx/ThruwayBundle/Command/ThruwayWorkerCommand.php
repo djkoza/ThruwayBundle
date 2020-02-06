@@ -63,10 +63,10 @@ class ThruwayWorkerCommand extends ContainerAwareCommand
 
             if ($workerAnnotation) {
                 $realm = $workerAnnotation->getRealm() ?: $config['realm'];
-                $url   = $workerAnnotation->getUrl() ?: $config['url'];
+                $url   = $workerAnnotation->getUrl() ?: $config['trusted_url'];
             } else {
                 $realm = $config['realm'];
-                $url   = $config['url'];
+                $url   = $config['trusted_url'];
             }
 
             $transport = new PawlTransportProvider($url);

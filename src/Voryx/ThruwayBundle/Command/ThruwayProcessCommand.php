@@ -14,6 +14,7 @@ use Thruway\Logging\Logger;
 use Thruway\Transport\PawlTransportProvider;
 use Voryx\ThruwayBundle\Process\Command;
 use Voryx\ThruwayBundle\Process\ProcessManager;
+use Thruway\Transport\RatchetTransportProvider;
 
 /**
  * Class ThruwayProcessCommand
@@ -144,7 +145,8 @@ class ThruwayProcessCommand extends ContainerAwareCommand
             $loop = $this->getContainer()->get('voryx.thruway.loop');
 
             $this->processManager = new ProcessManager("process_manager", $loop, $this->getContainer());
-            $this->processManager->addTransportProvider(new PawlTransportProvider($this->config['trusted_url']));
+            $transport = new PawlTransportProvider($this->config['trusted_url']);
+            $this->processManager->addTransportProvider($transport);
 
             $this->output->writeln('Starting Thruway Workers...');
             $this->output->writeln("The environment is: {$env}");
@@ -163,8 +165,10 @@ class ThruwayProcessCommand extends ContainerAwareCommand
             $this->processManager->start();
 
         } catch (\Exception $e) {
-            $this->logger->critical('EXCEPTION:' . $e->getMessage());
-            $this->output->writeln('EXCEPTION:' . $e->getMessage());
+            $msg = 'EXCEPTION: Uncaught PHP Exception: ' . $e->getMessage() . ' at ' . $e->getFile() . ' line ' . $e->getLine() . ' trace ' . $e->getTraceAsString();
+
+            $this->logger->critical($msg);
+            $this->output->writeln($msg);
         }
     }
 
@@ -292,7 +296,7 @@ class ThruwayProcessCommand extends ContainerAwareCommand
             'router' => 'thruway:router:start'
         ];
 
-        $onetimeWorkers = array_merge($defaultWorkers, $this->config['workers']['symfony_commands']);
+        $onetimeWorkers = array_merge($defaultWorkers, $this->config['workers']['symfony_commands'] ?? []);
 
         foreach ($onetimeWorkers as $workerName => $command) {
 
@@ -315,7 +319,7 @@ class ThruwayProcessCommand extends ContainerAwareCommand
      */
     protected function addShellCmdWorkers()
     {
-        $shellWorkers = $this->config['workers']['shell_commands'];
+        $shellWorkers = $this->config['workers']['shell_commands'] ?? [];
 
         foreach ($shellWorkers as $workerName => $command) {
 

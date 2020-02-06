@@ -227,6 +227,8 @@ class WampKernel implements HttpKernelInterface
         } catch (\Exception $e) {
             $this->cleanup();
             $message = "Unable to make the call: {$mapping->getAnnotation()->getName()} \n Message:  {$e->getMessage()} \n {$e->getFile()}:{$e->getLine()}";
+            $message .= ' trace ' . $e->getTraceAsString();
+
             $this->logger->critical($message);
             throw new \Exception($message);
         }
