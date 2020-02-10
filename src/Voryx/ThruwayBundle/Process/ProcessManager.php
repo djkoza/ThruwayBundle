@@ -22,9 +22,15 @@ class ProcessManager extends Client
     /** @var  ContainerInterface */
     private $container;
 
-    function __construct($realm, $loop, ContainerInterface $container)
+    /**
+     * @var array
+     */
+    private $listenRealms;
+
+    function __construct($realm, $loop, ContainerInterface $container, array $listenRealms)
     {
-        $this->container = $container;
+        $this->container    = $container;
+        $this->listenRealms = $listenRealms;
 
         parent::__construct($realm, $loop);
     }
@@ -46,17 +52,18 @@ class ProcessManager extends Client
         $session->register('restart_process', [$this, 'restartProcess']);
         $session->register('add_instance', [$this, 'addInstance']);
 
+        $config = $this->container->getParameter('voryx_thruway');
 
-        //Congestion Manager Client.  This needs to be a separate client because it needs to listen on the main realm and not `process_manager`.
-        $config            = $this->container->getParameter('voryx_thruway');
-        $congestionManager = new Client($config['realm'], $session->getLoop());
-        $congestionManager->addTransportProvider(new PawlTransportProvider($config['trusted_url']));
+        foreach($this->listenRealms as $listenRealm){
+            $congestionManager = new Client($listenRealm, $session->getLoop()); 
+            $congestionManager->addTransportProvider(new PawlTransportProvider($config['trusted_url']));
 
-        $congestionManager->on('open', function (ClientSession $session) {
-            $session->subscribe('thruway.metaevent.procedure.congestion', [$this, 'onCongestion']);
-        });
+            $congestionManager->on('open', function (ClientSession $session) {
+                $session->subscribe('thruway.metaevent.procedure.congestion', [$this, 'onCongestion']);
+            });
 
-        $congestionManager->start(false);
+            $congestionManager->start(false);
+        }
     }
 
     /**
