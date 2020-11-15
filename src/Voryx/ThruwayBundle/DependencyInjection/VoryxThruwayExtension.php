@@ -66,11 +66,11 @@ class VoryxThruwayExtension extends Extension
             );
         }
 
-        if (!isset($config['realm'])) {
-            throw new \InvalidArgumentException(
-              'The "realm" option must be set within voryx_thruway'
-            );
-        }
+        // if (!isset($config['realm'])) {
+        //     throw new \InvalidArgumentException(
+        //       'The "realm" option must be set within voryx_thruway'
+        //     );
+        // }
     }
 
     /**

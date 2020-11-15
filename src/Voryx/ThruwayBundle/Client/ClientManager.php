@@ -150,10 +150,13 @@ class ClientManager
      */
     private function getShortClient()
     {
-        $client = new Client($this->config['realm']);
-        $client->setAttemptRetry(false);
-        $client->addTransportProvider(new PawlTransportProvider($this->config['trusted_url'], $this->connector));
+        $this->container->get('logger')->addError("Cannot create shortClient / unsupported with multiple router instances");
+        throw new \Exception("Cannot create shortClient / unsupported with multiple router instances");
 
-        return $client;
+        // $client = new Client($this->config['realm']);
+        // $client->setAttemptRetry(false);
+        // $client->addTransportProvider(new PawlTransportProvider($this->config['trusted_url'], $this->connector));
+
+        // return $client;
     }
 }

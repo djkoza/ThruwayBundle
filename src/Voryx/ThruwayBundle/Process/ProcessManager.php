@@ -27,14 +27,19 @@ class ProcessManager extends Client
      */
     private $listenRealms;
 
-    function __construct($realm, $loop, ContainerInterface $container, array $listenRealms)
+    /**
+     * @var int
+     */
+    private $instanceNo;
+
+    function __construct($realm, $loop, ContainerInterface $container, array $listenRealms, int $instanceNo)
     {
         $this->container    = $container;
         $this->listenRealms = $listenRealms;
+        $this->instanceNo   = $instanceNo;
 
         parent::__construct($realm, $loop);
     }
-
 
     /**
      *
@@ -56,7 +61,7 @@ class ProcessManager extends Client
 
         foreach($this->listenRealms as $listenRealm){
             $congestionManager = new Client($listenRealm, $session->getLoop()); 
-            $congestionManager->addTransportProvider(new PawlTransportProvider($config['trusted_url']));
+            $congestionManager->addTransportProvider(new PawlTransportProvider('ws://' . $config['router']['ip'] . ':' . (intval($config['router']['trusted_port']) + $this->instanceNo)));
 
             $congestionManager->on('open', function (ClientSession $session) {
                 $session->subscribe('thruway.metaevent.procedure.congestion', [$this, 'onCongestion']);

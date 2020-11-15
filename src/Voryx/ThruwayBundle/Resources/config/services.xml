@@ -10,30 +10,31 @@
             <factory class="React\EventLoop\Factory" method="create" />
         </service>
 
-        <service id="voryx.thruway.ratchet.transport"
+<!--         <service id="voryx.thruway.ratchet.transport"
                  class="Thruway\Transport\RatchetTransportProvider"
                  public="false">
             <argument type="expression">parameter('voryx_thruway')['router']['ip']</argument>
             <argument type="expression">parameter('voryx_thruway')['router']['port']</argument>
-        </service>
+        </service> -->
 
-        <service id="voryx.thruway.client"
+<!--         <service id="voryx.thruway.client"
                  class="Thruway\Peer\Client">
             <argument type="expression">parameter('voryx_thruway')['realm']</argument>
-        </service>
+                <argument>main</argument>
+        </service> -->
 
-        <service id="voryx.thruway.web.push.client"
+<!--         <service id="voryx.thruway.web.push.client"
                  class="Voryx\ThruwayBundle\Client\WebPushClient"
                  public="false">
             <argument type="expression">parameter('voryx_thruway')['realm']</argument>
-        </service>
-
+        </service> -->
+<!-- 
         <service id="voryx.thruway.internal.transport"
                  class="Thruway\Transport\InternalClientTransportProvider"
                  public="false">
             <argument type="service" id="voryx.thruway.client"/>
         </service>
-
+ -->
         <service id="voryx.thruway.internal.manager"
                  class="Thruway\Transport\InternalClientTransportProvider"
                  public="false">
@@ -47,9 +48,9 @@
 
         <service id="voryx.thruway.server" class="Thruway\Peer\Router" public="true">
             <argument type="service" id="voryx.thruway.loop"/>
-            <call method="addTransportProvider">
+<!--             <call method="addTransportProvider">
                 <argument type="service" id="voryx.thruway.ratchet.transport"/>
-            </call>
+            </call> -->
             <!--<call method="addTransportProvider">-->
             <!--<argument type="service" id="voryx.thruway.internal.transport"/>-->
             <!--</call>-->
@@ -86,7 +87,6 @@
         <service id="voryx.thruway.authentication.manager"
                  class="Thruway\Authentication\AuthenticationManager"
                  public="false">
-            <argument type="service" id="voryx.thruway.client"/>
         </service>
 
         <service id="voryx.thruway.auth.manager.transport.provider"
@@ -101,20 +101,7 @@
             <argument type="service" id="service_container"/>
         </service>
 
-        <service id="voryx.thruway.wamp.cra.auth.client"
-                 class="Thruway\Authentication\WampCraAuthProvider">
-            <argument type="expression">[parameter('voryx_thruway')['realm']]</argument>
-            <call method="setUserDb">
-                <argument type="service" id="voryx.thruway.user.db"/>
-            </call>
-        </service>
-
-        <service id="voryx.thruway.wamp.cra.auth.transport.provider"
-                 class="Thruway\Transport\InternalClientTransportProvider">
-            <argument type="service" id="voryx.thruway.wamp.cra.auth.client"/>
-        </service>
-
-        <!--Main Thruway Client-->
+        <!--Main Thruway Client // UNUSED -->
         <service id="thruway.client"
                  class="Voryx\ThruwayBundle\Client\ClientManager" public="true">
             <argument type="service" id="service_container"/>
@@ -128,12 +115,12 @@
         </service>
 
         <!-- Topic State Handler -->
-        <service id="voryx.thruway.topic.state.handler"
+<!--         <service id="voryx.thruway.topic.state.handler"
                  class="Thruway\Subscription\StateHandlerRegistry"
                  public="false">
             <argument type="expression">parameter('voryx_thruway')['realm']</argument>
             <argument type="service" id="voryx.thruway.loop"/>
-        </service>
+        </service> -->
 
         <!-- Register command as public services -->
         <service id="thruway.command.debug" class="Voryx\ThruwayBundle\Command\ThruwayDebugCommand" public="true">

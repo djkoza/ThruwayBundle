@@ -35,6 +35,7 @@ class ThruwayWorkerCommand extends ContainerAwareCommand
             ->setDescription('Start Thruway WAMP worker')
             ->setHelp('The <info>%command.name%</info> starts the Thruway WAMP client.')
             ->addArgument('name', InputArgument::REQUIRED, 'The name of the worker you\'re starting')
+            ->addArgument('routerInstance', InputArgument::REQUIRED, 'The router instance of the worker you\'re starting')
             ->addArgument('instance', InputArgument::OPTIONAL, 'Worker instance number', 0);
     }
 
@@ -53,7 +54,9 @@ class ThruwayWorkerCommand extends ContainerAwareCommand
         }
 
         try {
-            $output->write("Making a go at starting a Thruway worker.");
+            $routerInstance = (int) $input->getArgument('routerInstance');
+
+            $output->writeln("Making a go at starting a Thruway worker [Router instance #{$routerInstance}]");
 
             $name             = $input->getArgument('name');
             $config           = $this->getContainer()->getParameter('voryx_thruway');
@@ -63,10 +66,10 @@ class ThruwayWorkerCommand extends ContainerAwareCommand
 
             if ($workerAnnotation) {
                 $realm = $workerAnnotation->getRealm() ?: $config['realm'];
-                $url   = $workerAnnotation->getUrl() ?: $config['trusted_url'];
+                $url   = $workerAnnotation->getUrl() ?: 'ws://' . $config['router']['ip'] . ':' . (intval($config['router']['trusted_port']) + $routerInstance);
             } else {
                 $realm = $config['realm'];
-                $url   = $config['trusted_url'];
+                $url   = 'ws://' . $config['router'] . ':' . (intval($config['router']['ip']['trusted_port']) + $routerInstance);
             }
 
             $transport = new PawlTransportProvider($url);
@@ -75,7 +78,7 @@ class ThruwayWorkerCommand extends ContainerAwareCommand
             $client->addTransportProvider($transport);
 
             $kernel->setProcessName($name);
-            $kernel->setClient($client, $this->getContainer()->get('voryx.thruway.client.react_connector'));
+            $kernel->setClient($client);
             $kernel->setProcessInstance($input->getArgument('instance'));
 
             $client->start();
